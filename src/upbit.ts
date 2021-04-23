@@ -4,7 +4,7 @@ import { createHash } from 'crypto';
 import { encode } from 'querystring';
 import jwt from 'jsonwebtoken';
 import upbitApi from 'upbit-api';
-import { CreateOrderParams, Order } from './types/upbit';
+import { CreateOrderParams, Order } from './types/upbit.types';
 
 const HOST = 'https://api.upbit.com';
 
@@ -36,27 +36,32 @@ export default class Upbit {
       access_key: this.accessKey,
       nonce: uuidv4(),
     };
-
     if (Boolean(data)) {
-      const queryHash = createHash('sha512').update(encode(data), 'utf-8').digest('hex');
+      const sha512 = createHash('sha512');
+      const queryHash = sha512.update(encode(data), 'utf-8').digest('hex');
       payload['query_hash'] = queryHash;
       payload['query_hash_alg'] = 'SHA512';
     }
-
     const jwtToken = jwt.sign(payload, this.secretKey);
+    console.log(data)
+    console.log(jwtToken);
     return jwtToken;
   }
 
   async createOrder(params: CreateOrderParams): Promise<Order> {
-    const { market, side, volume, price, orderType } = params;
-    const { data } = await this.http.post<Order>("/v1/orders", {
-      market,
-      side,
-      volume,
-      price,
-      ord_type: orderType,
-    });
-    return data;
+    try {
+      const { market, side, volume, price, orderType } = params;
+      const { data } = await this.http.post<Order>('/v1/orders', {
+        market,
+        side,
+        ...(volume && { volume }),
+        ...(price && { price }),
+        ord_type: orderType,
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
   }
 
   getMarketCodes = upbitApi.allMarket;
