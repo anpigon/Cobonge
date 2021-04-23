@@ -1,8 +1,10 @@
-import Upbit from "./upbit";
+import delay from 'delay';
+import schedule from 'node-schedule';
+import Upbit from './upbit';
 
 const upbit = new Upbit();
 
-// 변동성 돌파 전략 목표가 계산
+// 변동성 돌파 전략 목표가 계산하기
 async function getTargetPrice(market: string) {
   const data = await upbit.getCandlesDays(market, 2);
   const yesterdayCandle = data[1]; // 어제자 캔들
@@ -13,7 +15,21 @@ async function getTargetPrice(market: string) {
 }
 
 async function main() {
-  const targetPrice = await getTargetPrice("KRW-STEEM");
-  console.log(targetPrice);
+  const marketCode = 'KRW-STEEM';
+
+  let targetPrice = await getTargetPrice(marketCode); // 목표 가격
+
+  // UTL 0시 마다 목표 가격 계산하기
+  const rule = new schedule.RecurrenceRule();
+  rule.hour = 0;
+  rule.tz = 'Etc/UTC';
+  schedule.scheduleJob(rule, async () => {
+    targetPrice = await getTargetPrice(marketCode); // 목표 가격
+  });
+
+  while (true) {
+    console.log(targetPrice);
+    await delay(1000);
+  }
 }
 main();
