@@ -39,6 +39,10 @@ async function main() {
     const currentPrice = await getCurrentPrice(marketCode); // 현재 가격 조회
     console.info(`현재가격: ${currentPrice.toFixed(2)} / 목표가격: ${targetPrice.toFixed(2)}`);
 
+    if (currentPrice >= targetPrice) {
+      console.log('목표 가격에 도달하였습니다.');
+    }
+
     await delay(1000);
   }
 }
