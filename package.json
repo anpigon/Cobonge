@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "dependencies": {
     "axios": "^0.21.1",
+    "data-forge": "^1.8.17",
     "delay": "^5.0.0",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",

@@ -4,7 +4,7 @@ import { createHash } from 'crypto';
 import { encode } from 'querystring';
 import jwt from 'jsonwebtoken';
 import upbitApi from 'upbit-api';
-import { CreateOrderParams, Order } from './types/upbit.types';
+import { CreateOrderParams, Order, OrdersChance } from './types/upbit.types';
 
 const HOST = 'https://api.upbit.com';
 
@@ -43,8 +43,6 @@ export default class Upbit {
       payload['query_hash_alg'] = 'SHA512';
     }
     const jwtToken = jwt.sign(payload, this.secretKey);
-    console.log(data)
-    console.log(jwtToken);
     return jwtToken;
   }
 
@@ -57,6 +55,17 @@ export default class Upbit {
         ...(volume && { volume }),
         ...(price && { price }),
         ord_type: orderType,
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getOrderChance(market: string): Promise<OrdersChance> {
+    try {
+      const { data } = await this.http.get<OrdersChance>('/v1/orders/chance', {
+        params: { market },
       });
       return data;
     } catch (error) {

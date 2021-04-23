@@ -41,3 +41,40 @@ export type CreateOrderParams = {
   price?: string | number; // NumberString
   orderType: OrderType;
 };
+
+export type OrdersChance = {
+  bid_fee: string; // NumberString
+  ask_fee: string; // NumberString
+  market: {
+    id: string;
+    name: string;
+    order_types: Array<string>;
+    order_sides: Array<string>;
+    bid: {
+      currency: string;
+      price_unit: string | null;
+      min_total: string;
+    };
+    ask: {
+      currency: string;
+      price_unit: string | null;
+      min_total: string;
+    };
+    max_total: string; // NumberString
+    state: string;
+  };
+  bid_account: {
+    currency: string;
+    balance: string; // NumberString
+    locked: string; // NumberString
+    avg_krw_buy_price: string; // NumberString
+    modified: boolean;
+  };
+  ask_account: {
+    currency: string;
+    balance: string; // NumberString
+    locked: string; // NumberString
+    avg_krw_buy_price: string; // NumberString
+    modified: boolean;
+  };
+};
