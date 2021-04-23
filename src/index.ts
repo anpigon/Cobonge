@@ -14,6 +14,14 @@ async function getTargetPrice(market: string) {
   return targetPrice;
 }
 
+async function getCurrentPrice(market: string) {
+  const response = await upbit.getTicker([market]);
+  const coin = response?.find(
+    (e: { market: string; coin: string; price: number }) => `${e.market}-${e.coin}` === market
+  );
+  return coin?.price || 0.0;
+}
+
 async function main() {
   const marketCode = 'KRW-STEEM';
 
@@ -28,7 +36,9 @@ async function main() {
   });
 
   while (true) {
-    console.log(targetPrice);
+    const currentPrice = await getCurrentPrice(marketCode); // 현재 가격 조회
+    console.info(`현재가격: ${currentPrice.toFixed(2)} / 목표가격: ${targetPrice.toFixed(2)}`);
+
     await delay(1000);
   }
 }
